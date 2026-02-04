@@ -9,7 +9,7 @@ const bodySchema = z.object({
   role: z.enum(['Admin', 'Analyst', 'Viewer']),
 });
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, context: { params: Promise<{ id: string }> }) {
   const user = await getSessionUser();
   try {
     assertPermission(user, 'users:updateRole');
@@ -23,7 +23,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     return badRequest(parsed.error.flatten());
   }
 
-  const updated = updateUserRole(params.id, parsed.data.role as Role);
+  const { id } = await context.params;
+  const updated = updateUserRole(id, parsed.data.role as Role);
   if (!updated) return notFound('User not found');
 
   return ok({ item: updated });

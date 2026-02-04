@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { User } from '@/types/user';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Props = { user: User };
 
@@ -11,6 +11,25 @@ export default function TopBar({ user }: Props) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (!open) return;
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', onClick);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onClick);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
 
   const handleLogout = async () => {
     setLoading(true);
@@ -32,7 +51,7 @@ export default function TopBar({ user }: Props) {
         >
           View Events
         </Link>
-        <div className="relative">
+        <div className="relative" ref={menuRef}>
           <button
             onClick={() => setOpen((v) => !v)}
             className="flex items-center gap-3 rounded-full border border-border bg-surface-muted px-3 py-2 text-sm text-foreground transition hover:border-accent"
@@ -46,7 +65,7 @@ export default function TopBar({ user }: Props) {
             </div>
           </button>
           {open && (
-            <div className="absolute right-0 mt-2 w-56 rounded-lg border border-border bg-surface shadow-lg">
+            <div className="absolute right-0 mt-2 w-56 rounded-lg border border-border bg-surface shadow-lg z-20">
               <div className="border-b border-border px-4 py-3">
                 <p className="text-sm font-semibold text-foreground">{user.email}</p>
                 <p className="text-xs text-muted">{user.role}</p>
@@ -57,7 +76,7 @@ export default function TopBar({ user }: Props) {
                 className="flex w-full items-center justify-between px-4 py-3 text-sm text-foreground transition hover:bg-surface-muted disabled:opacity-60"
               >
                 <span>Logout</span>
-                {loading && <span className="text-xs text-muted">…</span>}
+                {loading && <span className="text-xs text-muted">...</span>}
               </button>
             </div>
           )}
