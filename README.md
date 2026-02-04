@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Mini InsightOps
 
-## Getting Started
+Next.js 14 (App Router) demo for operational visibility: map, events, dashboard, and RBAC-managed users. Auth is mocked with sessions and an in-memory store.
 
-First, run the development server:
+### Setup
+1) `npm install`
+2) `npm run dev`
+3) Open http://localhost:3000
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Test users
+- admin@test.com / password (Admin)
+- analyst@test.com / password (Analyst)
+- viewer@test.com / password (Viewer)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Routes
+- `/login` – sign in
+- `/map` – map + list + detail drawer (URL-synced filters)
+- `/events` – table with filters/sort/pagination, create/edit/delete, CSV export
+- `/dashboard` – charts + computed insights (filter-aware)
+- `/users` – Admin-only role management
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### API (mocked, in-memory)
+- Auth: `/api/auth/login`, `/api/auth/logout`, `/api/auth/me`
+- Events: `/api/events` (GET/POST), `/api/events/[id]` (GET/PUT/DELETE), `/api/events/export` (CSV)
+- Users: `/api/users` (GET), `/api/users/[id]/role` (PATCH)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Tradeoffs
+- In-memory data + sessions (no persistence)
+- Mock auth + hardcoded users
+- Leaflet/Recharts for visuals; not tuned for very large datasets
 
-## Learn More
+### Filters
+Filters are URL-synced across map/events/dashboard: `q, category, severity, days, minScore, sortBy, sortDir, page, pageSize`.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### QA checklist
+- Auth: login works for all 3 users; refresh keeps session; logout clears session.
+- RBAC server-side: Viewer blocked on POST/PUT/DELETE events; Analyst blocked on DELETE; non-admin blocked on users endpoints.
+- Filtering: same params affect /events, /map, /dashboard consistently.
+- Dashboard insights: high severity delta handles prev7=0 safely.
+- Users: admin can change other roles; cannot change own role; non-admin sees not-authorized state.

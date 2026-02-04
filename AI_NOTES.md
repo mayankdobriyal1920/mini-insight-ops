@@ -1,0 +1,7 @@
+- Used AI to scaffold features quickly: auth/session wiring, RBAC helpers, events CRUD, map view, dashboard charts, and admin users.
+- Prompted AI for: route handler shapes, filter parsing, map/list/detail coordination, dashboard insights, CSV export, and UI polish ideas.
+- Asked AI to generate zod schemas, Recharts configs, Leaflet marker styling, and reusable UI components (badge/button/error banner).
+- Leaned on AI to restructure pages into client/server split with guards and URL-synced filters.
+- Refactored after generation: unified severity badges, standardized error banners, raised pageSize caps, cleaned lint issues, removed unused components, rewrote README.
+- Manual cleanup: replaced stubs with real data fetch, enforced response helpers, ensured RBAC on all new routes.
+- What I would improve next with more time: add persistent storage (DB), proper auth provider instead of mock sessions, pagination on map with clustering, richer analytics (MTTR, dedup), and integration tests (Playwright) plus better toast/confirmation UX using a lightweight headless dialog system. 
