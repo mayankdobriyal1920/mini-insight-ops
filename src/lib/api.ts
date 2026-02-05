@@ -1,4 +1,4 @@
-import { InsightEvent } from '@/types/insight';
+import { EventListResponse, InsightEvent } from '@/types/insight';
 
 type ApiError = { code: string; message: string; details?: unknown };
 
@@ -17,7 +17,7 @@ export async function apiGetEvents(params: Record<string, string | number | unde
     if (value !== undefined && value !== '') qs.set(key, String(value));
   });
   const res = await fetch(`/api/events?${qs.toString()}`, { cache: 'no-store' });
-  return handleResponse<{ items: InsightEvent[]; meta: Record<string, unknown> }>(res);
+  return handleResponse<EventListResponse>(res);
 }
 
 export async function apiCreateEvent(payload: Partial<InsightEvent>) {

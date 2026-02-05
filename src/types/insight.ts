@@ -18,3 +18,14 @@ export const SEVERITY_ORDER: Record<Severity, number> = { High: 3, Medium: 2, Lo
 
 export const CATEGORY_OPTIONS: Category[] = ['Fraud', 'Ops', 'Safety', 'Sales', 'Health'];
 export const SEVERITY_OPTIONS: Severity[] = ['Low', 'Medium', 'High'];
+
+export type EventListMeta = {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  sortBy?: 'createdAt' | 'severity' | 'score';
+  sortDir?: 'asc' | 'desc';
+};
+
+export type EventListResponse = { items: InsightEvent[]; meta: EventListMeta };

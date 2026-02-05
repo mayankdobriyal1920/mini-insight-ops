@@ -1,11 +1,11 @@
 'use client';
 
-import { InsightEvent } from '@/types/insight';
+import { EventListMeta, InsightEvent } from '@/types/insight';
 import { format } from 'date-fns';
 import { SeverityBadge } from '../ui/severity-badge';
 
 type Props = {
-  data: { items: InsightEvent[]; meta: Record<string, unknown> } | null;
+  data: { items: InsightEvent[]; meta: EventListMeta } | null;
   loading: boolean;
   error: string | null;
   onRetry: () => void;
@@ -225,8 +225,15 @@ function Th({
   );
 }
 
-function Td({ children }: { children: React.ReactNode }) {
-  return <td className="px-4 py-3 align-top">{children}</td>;
+function Td({
+  children,
+  ...rest
+}: React.TdHTMLAttributes<HTMLTableCellElement> & { children: React.ReactNode }) {
+  return (
+    <td className="px-4 py-3 align-top" {...rest}>
+      {children}
+    </td>
+  );
 }
 
 function toggleSort(

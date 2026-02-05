@@ -7,7 +7,7 @@ import { can } from '@/lib/rbac-ui';
 import { EventFilters, parseFiltersFromSearchParams, serializeFiltersToQuery } from '@/lib/eventFilters';
 import { apiDeleteEvent, apiGetEvents } from '@/lib/api';
 import { apiExportEvents } from '@/lib/api';
-import { InsightEvent } from '@/types/insight';
+import { EventListResponse, InsightEvent } from '@/types/insight';
 import EventFiltersBar from '@/components/events/EventFilters';
 import EventTable from '@/components/events/EventTable';
 import EventFormModal from '@/components/events/EventFormModal';
@@ -21,9 +21,7 @@ export default function EventsPageClient({ user }: Props) {
   const [filters, setFilters] = useState<EventFilters>(() =>
     parseFiltersFromSearchParams(new URLSearchParams(searchParams)),
   );
-  const [data, setData] = useState<{ items: InsightEvent[]; meta: Record<string, unknown> } | null>(
-    null,
-  );
+  const [data, setData] = useState<EventListResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState<{ mode: 'create' | 'edit'; event?: InsightEvent } | null>(
