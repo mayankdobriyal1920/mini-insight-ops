@@ -5,7 +5,7 @@ import { NextRequest } from 'next/server';
 import { getEvent, updateEvent, deleteEvent } from '@/lib/store';
 import { InsightEventUpdateSchema } from '@/lib/validators';
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_: NextRequest, context: { params: Promise<{ id: string }> }) {
   const user = await getSessionUser();
   try {
     assertPermission(user, 'events:read');
@@ -13,12 +13,13 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
     return resp as Response;
   }
 
-  const event = getEvent(params.id);
+  const { id } = await context.params;
+  const event = getEvent(id);
   if (!event) return notFound('Event not found');
   return ok({ item: event });
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   const user = await getSessionUser();
   try {
     assertPermission(user, 'events:update');
@@ -32,12 +33,13 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     return badRequest(parsed.error.flatten());
   }
 
-  const updated = updateEvent(params.id, parsed.data);
+  const { id } = await context.params;
+  const updated = updateEvent(id, parsed.data);
   if (!updated) return notFound('Event not found');
   return ok({ item: updated });
 }
 
-export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_: NextRequest, context: { params: Promise<{ id: string }> }) {
   const user = await getSessionUser();
   try {
     assertPermission(user, 'events:delete');
@@ -45,7 +47,8 @@ export async function DELETE(_: NextRequest, { params }: { params: { id: string 
     return resp as Response;
   }
 
-  const deleted = deleteEvent(params.id);
+  const { id } = await context.params;
+  const deleted = deleteEvent(id);
   if (!deleted) return notFound('Event not found');
   return ok({ ok: true });
 }
